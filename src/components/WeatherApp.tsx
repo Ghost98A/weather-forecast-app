@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useSubscribeDev } from '@subscribe.dev/react'
+import { useTheme } from '../contexts/ThemeContext'
 
 interface WeatherForecast {
   location: string
@@ -15,6 +16,7 @@ interface ErrorState {
 
 export default function WeatherApp() {
   const { client, user, usage, subscriptionStatus, subscribe, signOut } = useSubscribeDev()
+  const { theme, toggleTheme } = useTheme()
 
   const [location, setLocation] = useState('')
   const [forecast, setForecast] = useState<WeatherForecast | null>(null)
@@ -87,9 +89,47 @@ export default function WeatherApp() {
               </svg>
               <h1 style={styles.headerTitle}>AI Weather Forecast</h1>
             </div>
-            <button onClick={signOut} style={styles.signOutButton}>
-              Sign Out
-            </button>
+            <div style={styles.headerActions}>
+              <button
+                onClick={toggleTheme}
+                style={styles.themeToggleButton}
+                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              >
+                {theme === 'light' ? (
+                  <svg
+                    style={styles.themeIcon}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    style={styles.themeIcon}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                )}
+              </button>
+              <button onClick={signOut} style={styles.signOutButton}>
+                Sign Out
+              </button>
+            </div>
           </div>
 
           {/* User Info Bar */}
@@ -227,13 +267,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '2rem 1rem',
   },
   mainCard: {
-    background: 'rgba(255, 255, 255, 0.95)',
+    background: 'var(--card-bg)',
     backdropFilter: 'blur(10px)',
     borderRadius: '24px',
     maxWidth: '900px',
     width: '100%',
     boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
     overflow: 'hidden',
+    transition: 'background 0.3s ease',
   },
   header: {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -259,6 +300,29 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '1.875rem',
     fontWeight: '700',
     margin: 0,
+  },
+  headerActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+  },
+  themeToggleButton: {
+    background: 'rgba(255, 255, 255, 0.2)',
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255, 255, 255, 0.3)',
+    color: 'white',
+    padding: '0.5rem',
+    fontSize: '0.875rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 'auto',
+    width: '40px',
+    height: '40px',
+  },
+  themeIcon: {
+    width: '20px',
+    height: '20px',
   },
   signOutButton: {
     background: 'rgba(255, 255, 255, 0.2)',
@@ -321,11 +385,12 @@ const styles: { [key: string]: React.CSSProperties } = {
   errorContainer: {
     margin: '0 2rem 2rem',
     padding: '1.5rem',
-    background: '#fee2e2',
-    border: '2px solid #ef4444',
+    background: 'var(--error-bg)',
+    border: '2px solid var(--error)',
     borderRadius: '12px',
     display: 'flex',
     gap: '1rem',
+    transition: 'background 0.3s ease, border-color 0.3s ease',
   },
   errorIcon: {
     fontSize: '2rem',
@@ -334,21 +399,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     flex: 1,
   },
   errorTitle: {
-    color: '#991b1b',
+    color: 'var(--error-text)',
     fontSize: '1.125rem',
     fontWeight: '600',
     marginBottom: '0.5rem',
   },
   errorMessage: {
-    color: '#7f1d1d',
+    color: 'var(--error-text)',
     marginBottom: '0.75rem',
   },
   upgradeButton: {
-    background: '#ef4444',
+    background: 'var(--error)',
     fontSize: '0.875rem',
   },
   retryMessage: {
-    color: '#7f1d1d',
+    color: 'var(--error-text)',
     fontSize: '0.875rem',
     fontStyle: 'italic',
   },
@@ -360,39 +425,40 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '48px',
     height: '48px',
     border: '4px solid rgba(59, 130, 246, 0.2)',
-    borderTopColor: '#3b82f6',
+    borderTopColor: 'var(--primary)',
     borderRadius: '50%',
     margin: '0 auto 1rem',
     animation: 'spin 1s linear infinite',
   },
   loadingText: {
-    color: '#64748b',
+    color: 'var(--text-secondary)',
     fontSize: '1rem',
   },
   forecastContainer: {
     margin: '0 2rem 2rem',
     padding: '1.5rem',
-    background: 'rgba(59, 130, 246, 0.05)',
+    background: 'var(--forecast-bg)',
     borderRadius: '12px',
-    border: '2px solid rgba(59, 130, 246, 0.2)',
+    border: '2px solid var(--forecast-border)',
+    transition: 'background 0.3s ease, border-color 0.3s ease',
   },
   forecastHeader: {
     marginBottom: '1rem',
     paddingBottom: '1rem',
-    borderBottom: '1px solid rgba(59, 130, 246, 0.2)',
+    borderBottom: '1px solid var(--forecast-border)',
   },
   forecastLocation: {
-    color: '#1e293b',
+    color: 'var(--text-primary)',
     fontSize: '1.5rem',
     fontWeight: '700',
     marginBottom: '0.25rem',
   },
   forecastTimestamp: {
-    color: '#64748b',
+    color: 'var(--text-secondary)',
     fontSize: '0.875rem',
   },
   forecastContent: {
-    color: '#334155',
+    color: 'var(--text-primary)',
   },
   forecastLine: {
     marginBottom: '0.75rem',
@@ -405,11 +471,11 @@ const styles: { [key: string]: React.CSSProperties } = {
   emptyStateIcon: {
     width: '80px',
     height: '80px',
-    color: '#cbd5e1',
+    color: 'var(--empty-icon)',
     margin: '0 auto 1rem',
   },
   emptyStateText: {
-    color: '#94a3b8',
+    color: 'var(--text-tertiary)',
     fontSize: '1.125rem',
   },
 }

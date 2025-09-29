@@ -43,7 +43,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '100%',
   },
   card: {
-    background: 'rgba(255, 255, 255, 0.95)',
+    background: 'var(--card-bg)',
     backdropFilter: 'blur(10px)',
     borderRadius: '24px',
     padding: '3rem 2rem',
@@ -51,6 +51,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '100%',
     boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
     textAlign: 'center',
+    transition: 'background 0.3s ease',
   },
   iconContainer: {
     display: 'flex',
@@ -60,17 +61,17 @@ const styles: { [key: string]: React.CSSProperties } = {
   icon: {
     width: '80px',
     height: '80px',
-    color: '#3b82f6',
+    color: 'var(--primary)',
   },
   title: {
     fontSize: '2rem',
     fontWeight: '700',
-    color: '#1e293b',
+    color: 'var(--text-primary)',
     marginBottom: '1rem',
   },
   description: {
     fontSize: '1.125rem',
-    color: '#64748b',
+    color: 'var(--text-secondary)',
     marginBottom: '2rem',
     lineHeight: '1.6',
   },
